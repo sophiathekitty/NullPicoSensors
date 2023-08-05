@@ -1,0 +1,6 @@
+wifi_info.py
+settings.json
+sensors.json
+.vscode/
+*.code-workspace
+.micropico
