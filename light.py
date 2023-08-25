@@ -2,9 +2,12 @@ import machine
 # class for handling a light sensor
 class light():
     # Connect the analog light sensor to GPIO pin ie: 27 for GP27 (ADC1)
-    def __init__(self,pin):
+    def __init__(self,pin,remote_id,name,mac_address):
         print(f"add light sensor on pin: {pin}")
         self.gpio = pin
+        self.remote_id = remote_id
+        self.name = name
+        self.mac_address = mac_address
         # light sensor
         self.ldr = machine.ADC(pin)
         self.level = None
@@ -20,9 +23,12 @@ class light():
         if self.max is None or self.level > self.max:
             self.max = self.level
     # get the json
-    def get_json(self,mac_address):
+    def get_json(self):
         data = {
-            'mac_address' : mac_address,
+            'id' : self.remote_id,
+            'remote_id' : self.remote_id,
+            'mac_address' : self.mac_address,
+            'name' : self.name,
             'gpio' : self.gpio,
             'level' : self.level,
             'max' : self.max,

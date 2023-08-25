@@ -4,6 +4,7 @@ import ujson
 import uio
 import ubinascii
 from sensors import sensors
+from api import WebServer
 import wifi_info
 # Function to connect to WiFi
 def connect_to_wifi(ssid, password):
@@ -52,6 +53,8 @@ def load_json_from_cache(cache_filename):
         print("Error loading data from cache: ", e)
         return None
 ip, mac = connect_to_wifi(wifi_info.ssid,wifi_info.password)
+api = WebServer(ip)
+
 # Example usage
 CACHE_FILE = "settings.json"
 
@@ -62,6 +65,7 @@ if cached_data:
     print("Data loaded from cache:")
     #print(cached_data)
     hub_ip = cached_data['hub']['url']
+    api.hub_ip = hub_ip
     SETTINGS_API_URL = f"http://{hub_ip}/plugins/NullSensors/api/pico/settings/{mac}"
     print(f"Data not found in cache, loading from API... {SETTINGS_API_URL}")
     data = load_json_from_api(SETTINGS_API_URL)
@@ -72,7 +76,8 @@ if cached_data:
         #hub = data['hub']['url']
         if 'pico' in data:
             pico_json = data['pico']
-            pico_sensors = sensors(pico_json)
+            pico_sensors = sensors(pico_json,api)
+            api.add_sensors(pico_sensors)
             pico_sensors.run()
 else:
     print("Error: upload settings.json with hub url")

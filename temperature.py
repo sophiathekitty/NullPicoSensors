@@ -4,9 +4,12 @@ import machine
 
 class temperature():
     # Connect the DHT11 sensor to GPIO pin ie: 2 for GP2
-    def __init__(self,pin):
+    def __init__(self,pin,remote_id,name,mac_address):
         print(f"add dht11 on pin: {pin}")
         self.gpio = pin
+        self.remote_id = remote_id
+        self.name = name
+        self.mac_address = mac_address
         self.dht_pin = machine.Pin(pin, machine.Pin.IN, machine.Pin.PULL_UP)
         self.dht_sensor = dht.DHT11(self.dht_pin)
         self.temp = None
@@ -37,16 +40,20 @@ class temperature():
         if self.hum_max is None or self.hum > self.hum_max:
             self.hum_max = self.hum
     # get the json
-    def get_json(self,mac_address):
+    def get_json(self):
         data = {
-            'mac_address' : mac_address,
+            'id' : self.remote_id,
+            'remote_id' : self.remote_id,
+            'name' : self.name,
+            'mac_address' : self.mac_address,
             'gpio' : self.gpio,
             'temp' : self.temp,
             'temp_min' : self.temp_min,
             'temp_max' : self.temp_max,
             'hum' : self.hum,
             'hum_min' : self.hum_min,
-            'hum_max' : self.hum_max
+            'hum_max' : self.hum_max,
+            'error' : "ok"
         }
         return data
     # resets the min and max values
